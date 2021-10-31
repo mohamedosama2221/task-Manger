@@ -1,32 +1,79 @@
 const taskModel = require("../models/Task");
 
-const getAllTasks = (req, res) => {
-  console.log("get all the tasks");
-  res.status(200).send("submit");
+const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await taskModel.find();
+    if (tasks.length === 0) {
+      return res.status(200).json({ success: true, msg: "no tasks found" });
+    }
+    return res.status(200).json({ success: true, data: tasks });
+  } catch (error) {
+    return res.status(404).json({ success: false, msg: error });
+  }
 };
 
 const createTask = async (req, res) => {
-  const task = await taskModel.create(req.body);
-  res.status(200).json({ success: true, data: task });
+  const { name, completed } = req.body;
+  try {
+    const task = await taskModel.create({ content: name, complete: completed });
+    return res.status(201).json({ success: true, data: task });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, msg:error });
+  }
 };
 
-const getASingleTask = (req, res) => {
+const getASingleTask = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
-  res.status(200).send("submit");
+  try {
+    const task = await taskModel.findOne({ _id: id });
+
+    if (!task) {
+      return res
+        .status(404)
+        .json({ success: false, msg: `no task found with an id of :${id}` });
+    }
+
+    return res.status(200).json({ success: true, data: task });
+  } catch (error) {
+    return res.status(404).json({ success: false, msg: error });
+  }
 };
 
-const updateTask = (req, res) => {
+const updateTask = async (req, res) => {
   const { id } = req.params;
-  const { task } = req.body;
-  console.log(task, id);
-  res.status(200).json({ success: true, data: task });
+  const { name, completed } = req.body;
+  try {
+    await taskModel.updateOne(
+      { _id: id },
+      { content: name, complete: completed },
+      { runValidators: true }
+    );
+    return res
+      .status(200)
+      .json({ success: true, data: { req: req.body, id: id } });
+  } catch (error) {
+    return res.status(404).json({ success: false, msg: error });
+  }
 };
 
-const deleteTask = (req, res) => {
+const deleteTask = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
-  res.status(200).send("submit");
+
+  try {
+    const task = await taskModel.deleteOne({ _id: id });
+
+    if (!task) {
+      return res
+        .status(404)
+        .json({ success: false, msg: `no task found with an id of :${id}` });
+    }
+
+    return res.status(200).json({ success: true, msg: "task deleted" });
+  } catch (error) {
+    return res.status(404).json({ success: false, msg: error });
+  }
 };
 
 module.exports = {
