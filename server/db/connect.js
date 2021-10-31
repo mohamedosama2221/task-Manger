@@ -22,11 +22,6 @@ const initDatabase = async (callback) => {
     });
 };
 
-const getDb = () => {
-  return _db;
-};
-
 module.exports = {
   initDatabase,
-  getDb,
 };
