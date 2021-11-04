@@ -34,7 +34,7 @@ paths:
             schema:
               $ref: "#/components/schemas/CreateTaskRequest"
             example:
-              content: wash the dishes
+              name: wash the dishes
               complete: false
         required: true
       responses:
@@ -42,7 +42,7 @@ paths:
           description: ""
           headers: {}
       deprecated: false
-  /tasks/{id}:
+  /{id}:
     summary: Get a Task by ID
     parameters:
       - in: path
