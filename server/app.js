@@ -42,12 +42,11 @@ const limiter = rateLimit({
 });
 
 app.use(limiter());
+app.use(express.static("./public"));
+app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(xssClean());
-
-app.use(express.static("./public"));
-app.use(express.json());
 
 //documentation route
 app.get("/docs", (req, res) => {
