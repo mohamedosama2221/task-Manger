@@ -5,6 +5,12 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+//security middleware
+const helmet = require("helmet");
+const cors = require("cors");
+const xssClean = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+
 //swagger config
 var path = require("path");
 var swagger_path = path.resolve(__dirname, "./swagger/swagger.yaml");
@@ -26,6 +32,20 @@ const tasksRouter = require("./routes/tasks");
 const { notFound } = require("./middleware/not-found");
 
 //middleware
+
+//security middleware
+app.set("trust proxy", 1);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
+app.use(limiter());
+app.use(helmet());
+app.use(cors());
+app.use(xssClean());
+
 app.use(express.static("./public"));
 app.use(express.json());
 
