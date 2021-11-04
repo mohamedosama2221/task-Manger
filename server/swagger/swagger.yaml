@@ -99,16 +99,16 @@ components:
     CreateTaskRequest:
       title: CreateTaskRequest
       required:
-        - content
+        - name
         - complete
       type: object
       properties:
-        content:
+        name:
           type: string
         complete:
           type: boolean
       example:
-        content: wash the dishes
+        name: wash the dishes
         complete: false
     UpdateTaskRequest:
       title: UpdateTaskRequest
