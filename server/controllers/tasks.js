@@ -21,6 +21,11 @@ const createTask = async (req, res) => {
   const { name, completed } = req.body;
   try {
     const task = await taskModel.create({ content: name, complete: completed });
+    if (!name) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, msg: "Task name can't be empty" });
+    }
     return res.status(StatusCodes.CREATED).json({ success: true, data: task });
   } catch (error) {
     return res
