@@ -9,7 +9,7 @@ const app = express();
 const helmet = require("helmet");
 const cors = require("cors");
 const xssClean = require("xss-clean");
-const rateLimit = require("express-rate-limit");
+const rateLimiter = require("express-rate-limit");
 
 //swagger config
 var path = require("path");
@@ -35,13 +35,12 @@ const { notFound } = require("./middleware/not-found");
 
 //security middleware
 app.set("trust proxy", 1);
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
-app.use(limiter());
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+  })
+);
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(helmet());
