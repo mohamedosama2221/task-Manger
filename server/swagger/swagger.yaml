@@ -6,7 +6,7 @@ info:
     email: eng.muhamed.osama@gmail.com
   version: "1.0"
 servers:
-  - url: https://task-api-697.herokuapp.com/
+  - url: https://task-api-697.herokuapp.com/api/v1/tasks
     variables: {}
 paths:
   /:
