@@ -1,14 +1,19 @@
 const taskModel = require("../models/Task");
+const { StatusCodes } = require("http-status-codes");
 
 const getAllTasks = async (req, res) => {
   try {
     const tasks = await taskModel.find();
     if (tasks.length === 0) {
-      return res.status(200).json({ success: true, msg: "no tasks found" });
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: true, msg: "no tasks found" });
     }
-    return res.status(200).json({ success: true, data: tasks });
+    return res.status(StatusCodes.OK).json({ success: true, data: tasks });
   } catch (error) {
-    return res.status(404).json({ success: false, msg: error });
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ success: false, msg: error });
   }
 };
 
@@ -16,11 +21,11 @@ const createTask = async (req, res) => {
   const { name, completed } = req.body;
   try {
     const task = await taskModel.create({ content: name, complete: completed });
-    return res.status(201).json({ success: true, data: task });
+    return res.status(StatusCodes.CREATED).json({ success: true, data: task });
   } catch (error) {
     return res
-      .status(500)
-      .json({ success: false, msg:error });
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ success: false, msg: error });
   }
 };
 
@@ -31,13 +36,15 @@ const getASingleTask = async (req, res) => {
 
     if (!task) {
       return res
-        .status(404)
+        .status(StatusCodes.NOT_FOUND)
         .json({ success: false, msg: `no task found with an id of :${id}` });
     }
 
-    return res.status(200).json({ success: true, data: task });
+    return res.status(StatusCodes.OK).json({ success: true, data: task });
   } catch (error) {
-    return res.status(404).json({ success: false, msg: error });
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ success: false, msg: error });
   }
 };
 
@@ -50,11 +57,18 @@ const updateTask = async (req, res) => {
       { content: name, complete: completed },
       { runValidators: true }
     );
+    if (!name) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ success: false, msg: "Task name can't be empty" });
+    }
     return res
-      .status(200)
+      .status(StatusCodes.OK)
       .json({ success: true, data: { req: req.body, id: id } });
   } catch (error) {
-    return res.status(404).json({ success: false, msg: error });
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ success: false, msg: error });
   }
 };
 
@@ -66,13 +80,17 @@ const deleteTask = async (req, res) => {
 
     if (!task) {
       return res
-        .status(404)
+        .status(StatusCodes.BAD_REQUEST)
         .json({ success: false, msg: `no task found with an id of :${id}` });
     }
 
-    return res.status(200).json({ success: true, msg: "task deleted" });
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, msg: "task deleted" });
   } catch (error) {
-    return res.status(404).json({ success: false, msg: error });
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ success: false, msg: error });
   }
 };
 
